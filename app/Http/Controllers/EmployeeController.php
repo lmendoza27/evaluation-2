@@ -9,26 +9,33 @@ use DataTables;
 class EmployeeController extends Controller
 {
     public function index(Request $request)
-    {
-   
+    {   
+
         if ($request->ajax()) {
+            
             $data = Employee::latest()->get();
             return Datatables::of($data)
                     ->addIndexColumn()
                     ->addColumn('action', function($row){
-   
-                           $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Edit" class="edit btn btn-primary btn-sm editProduct">Editar</a>';
-   
-                           $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Delete" class="btn btn-danger btn-sm deleteProduct">Borrar</a>';
-    
+                    
+                        if($row->estado == "1"){
 
-                           //$btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Inactive" class="btn btn-secondary btn-sm inactiveProduct">Desactivar</a>';
+                           $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Edit" class="edit btn btn-primary btn-sm editProduct" >Editar</a><br>';
+                           $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Delete" class="btn btn-danger btn-sm deleteProduct">Borrar</a><br>';
+                           $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Update" class="btn btn-secondary btn-sm inactiveProduct">Desactivar</a>';
 
                             return $btn;
+
+                        }else{
+                            $btn = ' <a href="javascript:void(0)" data-toggle="tooltip"  data-id="'.$row->id.'" data-original-title="Update" class="btn btn-success btn-sm inactiveProduct">Activar</a>';
+ 
+                             return $btn;  
+                        }
                     })
                     ->rawColumns(['action'])
                     ->make(true);
-        }
+
+                }
       
         return view('employee');
     }
@@ -48,14 +55,24 @@ class EmployeeController extends Controller
         return response()->json($employee);
     }
 
-    /*public function deactive($id)
+    public function update($id)
     {
         //$employee = Employee::find($id);
-
+        //dd($employee);
+        //$employee = Employee::find($id)->value('estado');
+        $employee = Employee::where('id',$id)->value('estado');
+        //dd($employee);
+        if($employee == "1") {
         Employee::where('id', $id)->update(array('estado' => '0'));
 
-        //return response()->json($employee);
-    }*/
+        return response()->json(['success'=>'Este empleado acaba de ser desactivado']);
+
+        }else{
+            Employee::where('id', $id)->update(array('estado' => '1'));
+
+            return response()->json(['success'=>'Este empleado acaba de ser activado']);
+        }
+    }
 
 
     public function destroy($id)
