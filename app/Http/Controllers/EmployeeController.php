@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Employee;
+use App\Empleado;
 use Illuminate\Http\Request;
 use DataTables;
 
@@ -13,7 +13,7 @@ class EmployeeController extends Controller
 
         if ($request->ajax()) {
             
-            $data = Employee::latest()->get();
+            $data = Empleado::latest()->get();
             return Datatables::of($data)
                     ->addIndexColumn()
                     ->addColumn('action', function($row){
@@ -43,15 +43,45 @@ class EmployeeController extends Controller
 
     public function store(Request $request)
     {
-        Employee::updateOrCreate(['id' => $request->product_id],
-                ['nombre' => $request->nombre, 'apellidos' => $request->apellidos, 'dni' => $request->dni, 'email' => $request->email, 'fecha_nacimiento' => $request->fecha_nacimiento, 'cargo' => $request->cargo, 'area' => $request->area, 'fecha_inicio' => $request->fecha_inicio, 'fecha_fin' => $request->fecha_fin, 'tipo_contacto' => $request->tipo_contacto, 'estado' => '1']);        
+
+        /*$request->validate([
+            'foto' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);*/
+        //$imageName = time().'.'.$request->foto->extension(); 
+        //$request->foto->move(public_path('images'), $imageName);
+        /*Empleado::updateOrCreate(['id' => $request->product_id],
+                ['nombre' => $request->nombre, 'apellidos' => $request->apellidos, 'dni' => $request->dni, 'email' => $request->email, 'fecha_nacimiento' => $request->fecha_nacimiento, 'foto' => $request->foto]);        
    
-        return response()->json(['success'=>'Empleado guardado exitosamente.']);
+        return response()->json(['success'=>'Empleado guardado exitosamente.']);*/
+
+        $request->validate([
+            'foto' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+        if ($request->file('foto')) {
+            $imagePath = $request->file('foto');
+            $imageName = $imagePath->getClientOriginalName();
+            $path = $request->file('foto')->storeAs('uploads', $imageName, 'public');
+        }
+
+        //dd($request);
+        Empleado::updateOrCreate(
+            ['id' => $request->product_id],
+            ['nombre' => $request->nombre,
+            'apellidos' => $request->apellidos,
+            'dni' => $request->dni,
+            'email' => $request->email,
+            'fecha_nacimiento' => $request->fecha_nacimiento,
+            'estado' => '1',
+            'foto' => '/storage/'.$path,
+            ]
+        );
+
+        return response()->json(['success' => 'Empleado guardado exitosamente.']);
     }
 
     public function edit($id)
     {
-        $employee = Employee::find($id);
+        $employee = Empleado::find($id);
         return response()->json($employee);
     }
 
@@ -60,15 +90,15 @@ class EmployeeController extends Controller
         //$employee = Employee::find($id);
         //dd($employee);
         //$employee = Employee::find($id)->value('estado');
-        $employee = Employee::where('id',$id)->value('estado');
+        $employee = Empleado::where('id',$id)->value('estado');
         //dd($employee);
         if($employee == "1") {
-        Employee::where('id', $id)->update(array('estado' => '0'));
+            Empleado::where('id', $id)->update(array('estado' => '0'));
 
         return response()->json(['success'=>'Este empleado acaba de ser desactivado']);
 
         }else{
-            Employee::where('id', $id)->update(array('estado' => '1'));
+            Empleado::where('id', $id)->update(array('estado' => '1'));
 
             return response()->json(['success'=>'Este empleado acaba de ser activado']);
         }
@@ -77,7 +107,7 @@ class EmployeeController extends Controller
 
     public function destroy($id)
     {
-        Employee::find($id)->delete();
+        Empleado::find($id)->delete();
      
         return response()->json(['success'=>'Empleado eliminado satisfactoriamente.']);
     }

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmployeeController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,5 +21,9 @@ use App\Http\Controllers\EmployeeController;
 
 //Route::put('ajaxemployees/deactive', 'EmployeeController@deactive')->name('ajaxemployees.deactive');
 //Route::put('ajaxemployees/deactive', [EmployeeController::class, 'deactive'])->name('ajaxemployees.deactive');
+
 Route::resource('/','EmployeeController');
 Route::resource('ajaxemployees','EmployeeController');
+Route::resource('ajaxhorarios','HorariosController');
+Route::resource('ajaxasignaciones','AsignacionesController');
+
