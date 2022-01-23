@@ -16,9 +16,9 @@ class CreateAsignacionesTable extends Migration
         Schema::create('asignaciones', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('horario_id')->unsigned();
-            $table->foreign('horario_id')->references('id')->on('horarios');
+            $table->foreign('horario_id')->references('id')->on('horarios')->onDelete('cascade');;
             $table->bigInteger('empleado_id')->unsigned();
-            $table->foreign('empleado_id')->references('id')->on('empleados');
+            $table->foreign('empleado_id')->references('id')->on('empleados')->onDelete('cascade');
             $table->timestamps();
         });
     }

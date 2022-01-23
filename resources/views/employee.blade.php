@@ -38,7 +38,7 @@
     <a class="btn btn-success" href="javascript:void(0)" id="createNewProduct"> Registrar Empleado</a><br><br>
     <a class="btn btn-warning" href="ajaxhorarios"> <b>Horarios</b></a>
     <a class="btn btn-warning" href="ajaxasignaciones"> <b>Asignar Horarios</b></a>
-    <a class="btn btn-warning" href="javascript:void(0)" id="createNewMarcacion"> <b>Marcaciones</b></a><br><br>
+    <a class="btn btn-warning" href="ajaxmarcaciones" id="createNewMarcacion"> <b>Marcaciones</b></a><br><br>
     <table class="table table-bordered data-table">
         <br><br>
 
@@ -112,7 +112,7 @@
                     <div class="form-group">
                         <label for="foto" class="form-label">Foto del empleado</label>
                         <input class="form-control" type="file" id="foto" name="foto"
-                            accept="image/png, image/jpg, image/jpeg">
+                            accept="image/png, image/jpg, image/jpeg" onChange="guardar()">
                     </div>
 
                     <hr class="my-2">
@@ -142,7 +142,7 @@
         var text = document.getElementById('warning');
         var email = document.getElementById('email').value;
         var pattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
-         if(document.getElementById("nombre").value.length>=4 && document.getElementById("apellidos").value.length>=2 && document.getElementById("dni").value.length>=8 && document.getElementById("dni").value.length<=8 && email.match(pattern) && document.getElementById("fecha_nacimiento").value.length>=1) {
+         if(document.getElementById("nombre").value.length>=4 && document.getElementById("apellidos").value.length>=2 && document.getElementById("dni").value.length>=8 && document.getElementById("dni").value.length<=8 && email.match(pattern) && document.getElementById("fecha_nacimiento").value.length>=1 && document.getElementById("foto").files.length !== 0 ) {
             document.getElementById('saveBtn').disabled = false;
         }
         else { 
@@ -245,6 +245,7 @@
                   $('#email').val(data.email);
                   $('#fecha_nacimiento').val(data.fecha_nacimiento);
                   $('#cargo').val(data.cargo);
+                  $('#foto').val(data.foto);
                   $('#area').val(data.area); 
                   $('#fecha_inicio').val(data.fecha_inicio); 
                   $('#fecha_fin').val(data.fecha_fin); 
@@ -253,7 +254,7 @@
               })
            });
             
-           $('#productForm').submit(function(e) {
+        /*   $('#productForm').submit(function(e) {
             e.preventDefault();
     var formData = new FormData(this);
     $.ajax({
@@ -266,21 +267,35 @@
         processData: false,
         success: function (data) {
             this.reset();
+            $('#ajaxModel').modal('hide');
             alert('File has been uploaded successfully');
             console.log(data);
+            this.reset();
+                      $('#ajaxModel').modal('hide');
+                      table.draw();
+                      Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Empleado actualizado satisfactoriamente',
+                        showConfirmButton: false,
+                        timer: 1500
+                        })
         },
         error: function (data) {
-            console.log(data);
+            //console.log(data);
+            console.log('Error:', data);
+                      $('#saveBtn').html('Guardar Cambios');
+                      Swal.fire('Disculpa, el DNI introducido ya existe');
         }
     });
 
 
-           });
+           });*/
 
            // $('#saveBtn').click(function (e) {
-            $('body').on('submit', '#productForm', function (e) {
+           $('body').on('submit', '#productForm', function (e) {
                 e.preventDefault();
-                $('#saveBtn').html('Sending..');
+                //$('#saveBtn').html('Sending..');
                 var formData = new FormData(this);
                 //var formData = new FormData($('#productForm'));
                 $.ajax({

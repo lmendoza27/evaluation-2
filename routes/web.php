@@ -26,4 +26,5 @@ Route::resource('/','EmployeeController');
 Route::resource('ajaxemployees','EmployeeController');
 Route::resource('ajaxhorarios','HorariosController');
 Route::resource('ajaxasignaciones','AsignacionesController');
+Route::resource('ajaxmarcaciones','MarcacionesController');
 

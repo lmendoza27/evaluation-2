@@ -29,7 +29,7 @@
     <a class="btn btn-success" href="javascript:void(0)" id="createNewProduct"> Registrar Horario</a><br><br>
     <a class="btn btn-warning" href="ajaxemployees"> <b>Empleados</b></a>
     <a class="btn btn-warning" href="ajaxasignaciones"> <b>Asignar Horarios</b></a>
-    <a class="btn btn-warning" href="javascript:void(0)" id="createNewMarcacion"> <b>Marcaciones</b></a><br><br>
+    <a class="btn btn-warning" href="ajaxmarcaciones" id="createNewMarcacion"> <b>Marcaciones</b></a><br><br>
     <table class="table table-bordered data-table">
         <br><br>
 
@@ -158,10 +158,10 @@
             
             $('body').on('click', '.editProduct', function () {
                 $( "#saveBtn" ).prop( "disabled", false );
-                $( "#hora_fin" ).prop( "disabled", true );
+                /*$( "#hora_fin" ).prop( "disabled", true );
                 $("#hora_inicio").click(function(){
                     $( "#hora_fin" ).prop( "disabled", false );
-                    });
+                    });*/
                 //$('#hora_inicio').click();
                 
     

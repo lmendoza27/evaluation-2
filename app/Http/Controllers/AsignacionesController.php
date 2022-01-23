@@ -11,13 +11,21 @@ class AsignacionesController extends Controller
 {
     public function index(Request $request)
     {   
-
+      /*  $data = DB::table("asignaciones")
+        ->join('empleados', 'empleados.id', '=', 'asignaciones.empleado_id')
+        ->join('horarios', 'horarios.id', '=', 'asignaciones.horario_id')
+        ->select('asignaciones.id','empleados.id as emoo','empleados.nombre','empleados.apellidos','empleados.dni','empleados.email','horarios.id as ho','horarios.hora_inicio','horarios.hora_fin','horarios.tolerancias')
+        //->join("empleados as em", "em.id","=","asignaciones.empleado_id")
+        //->join("horarios as ho", "ho.id","=","asignaciones.horario_id")
+        ->get();
+        dd($data);*/
         if ($request->ajax()) {
             
             //$data = Asignacione::latest()->get();
             $data = DB::table("asignaciones")
-            ->join("empleados as em", "em.id","=","asignaciones.empleado_id")
-            ->join("horarios as ho", "ho.id","=","asignaciones.horario_id")
+            ->join('empleados', 'empleados.id', '=', 'asignaciones.empleado_id')
+            ->join('horarios', 'horarios.id', '=', 'asignaciones.horario_id')
+            ->select('asignaciones.id','empleados.id as emoo','empleados.nombre','empleados.apellidos','empleados.dni','empleados.email','horarios.id as ho','horarios.hora_inicio','horarios.hora_fin','horarios.tolerancias')
             ->get();
             return Datatables::of($data)
                     ->addIndexColumn()
@@ -35,7 +43,8 @@ class AsignacionesController extends Controller
        // $horarioData['horario'] = Horario::latest()->get();     
        //$horarioData = Horario::pluck('hora_fin', 'id'); 
        $horarioData = Horario::select('hora_fin','hora_inicio','id')->get();
-       $empleadoData = Empleado::select('dni','nombre','apellidos','dni')->where("estado","=","1")->get();
+       $empleadoData = Empleado::select('dni','nombre','apellidos','dni','id')->where("estado","=","1")->get();
+       //$empleadoData = Empleado::select('dni','nombre','apellidos','dni','id')->get();
        //$horarioData = Horario::select('hora_inicio','hora_fin', 'id')->get();
 
        //dd($horarioData);
@@ -47,12 +56,7 @@ class AsignacionesController extends Controller
     public function store(Request $request)
     {
 
-        /*$request->validate([
-            'foto' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);*/
-        //$imageName = time().'.'.$request->foto->extension(); 
-        //$request->foto->move(public_path('images'), $imageName);
-        Horario::updateOrCreate(['id' => $request->product_id],
+        Asignacione::updateOrCreate(['id' => $request->product_id],
                 ['horario_id' => $request->horario_id, 'empleado_id' => $request->empleado_id]);        
    
         return response()->json(['success'=>'Asignación guardada exitosamente.']);
@@ -60,7 +64,7 @@ class AsignacionesController extends Controller
 
     public function edit($id)
     {
-        $employee = Horario::find($id);
+        $employee = Asignacione::find($id);
         return response()->json($employee);
     }
 
@@ -72,7 +76,9 @@ class AsignacionesController extends Controller
 
     public function destroy($id)
     {
-        Horario::find($id)->delete();
+
+
+        Asignacione::where('id',$id)->delete();
      
         return response()->json(['success'=>'Empleado eliminado satisfactoriamente.']);
     }

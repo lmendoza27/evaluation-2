@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 use App\Empleado;
 use Illuminate\Http\Request;
 use DataTables;
-
+//use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File; 
 
 class EmployeeController extends Controller
 {
@@ -107,8 +108,26 @@ class EmployeeController extends Controller
 
     public function destroy($id)
     {
+
+      
+        
+         //$file_path = app_path().''.$destroy;
+         //$file_path = storage_path($destroy);
+         //$file_path = $destroy;
+         //unlink($file_path);
+         //$productImage = str_replace($destroy);
+         //Storage::delete('/public' . $destroy);
+         //$filename = '/public' . $destroy;
+         //dd($filename);
+         //File::delete($filename);
+         
+        // dd($file_path);
+        //dd($destroy);
+// unlink($file_path);
+$destroy = Empleado::where('id',$id)->value('foto');
+File::delete(public_path($destroy));
         Empleado::find($id)->delete();
-     
+
         return response()->json(['success'=>'Empleado eliminado satisfactoriamente.']);
     }
 

@@ -23,27 +23,32 @@
 <body>
     
 <div class="container">
-    <h1>Mantenimiento de Asignación de Horarios</h1>
+    <h1>Mantenimiento de Marcaciones de Empleados</h1>
 
     
     <a class="btn btn-success" href="javascript:void(0)" id="createNewProduct"> Fijar horario a empleado</a><br><br>
     <a class="btn btn-warning" href="ajaxemployees"> <b>Empleados</b></a>
     <a class="btn btn-warning" href="ajaxhorarios"> <b> Horarios</b></a>
-    <a class="btn btn-warning" href="ajaxmarcaciones" id="createNewMarcacion"> <b>Marcaciones</b></a><br><br>
+    <a class="btn btn-warning" href="ajaxasignaciones" id="createNewMarcacion"> <b>Asignación de Horarios</b></a><br><br>
     <table class="table table-bordered data-table">
         <br><br>
 
-        <p>Es requerido completarlo para poder establecer los horarios fijados a los empleados y finalmente asignarlos en las marcaciones. Recordar que los empleados desactivados no podrán ser asignados</p>
+        <p>Este es el último proceso, habiendo creado al empleado su horario y la asignación del mismo se procede a registrarlo para marcar su hora de entrada y salida desde este apartado del sitio</p>
     
         <thead>
             <tr>
                 <th>N°</th>
-                <th>Hora de Inicio</th>
-                <th>Hora Fin</th>
-                <th>DNI</th>
+                <th>Fecha</th>
                 <th>Nombre</th>
                 <th>Apellidos</th>
-                <th>Tolerancia (minutos)</th>
+                <th>DNI</th>
+                <th>Foto</th>
+                <th>Hora de Inicio</th>
+                <th>Hora de Fin</th>
+                <th>Tolerancias</th>
+                <th>Entrada</th>
+                <th>Salida</th>
+
                 <th width="280px">Acciones</th>
             </tr>
         </thead>
@@ -61,41 +66,44 @@
             <div class="modal-body">
                 <form id="productForm" name="productForm" class="form-horizontal" >
                    <input type="hidden" name="product_id" id="product_id">
-                    <div class="form-group">
-                        <label>Horario</label>
-                      
-                      <!--
-                        <div class="col-sm-12">
-                            <input type="text" class="form-control" id="hora_inicio"  name="hora_inicio" placeholder="Ingresa Nombre" value="" maxlength="50" required="" id="nombre" onChange="guardar();chkvalue();" autocomplete="off">
-                        </div>-->
-                        <div class="col-sm-12">
-                        <select class="form-control" name="horario_id" id="horario_id" onChange="guardar()">
-                            <option value="">Escoge un horario</option>
-                            @foreach ($horarioData as $horario)
-                          
-                                <option value="{{ $horario->id }}"> 
 
-                                    {{ $horario->hora_inicio }}  - {{ $horario->hora_fin }}
+                   <div class="form-group" id="fecha_form">
+                    <label>Fecha</label>
+                    <div class="col-sm-12">
+                        <input type="date" id="fecha" name="fecha" class="form-control" onChange="guardar()">
+                    </div>
+                </div>
+
+                   <div class="form-group" id="empleado_form">
+                    <label>Empleado</label>
+                    <div class="col-sm-12">
+                        <select class="form-control" name="asignacion_id" id="asignacion_id" onChange="guardar()">
+                            <option value="">Escoge un empleado</option>
+                            @foreach ($asignacionData as $empleadote)
+                          
+                                <option value="{{ $empleadote->id }}"> 
+
+                                DNI: {{ $empleadote->dni }} - Nombre: {{ $empleadote->nombre }} {{ $empleadote->apellidos }} ({{ $empleadote->hora_inicio }} - {{ $empleadote->hora_fin }})
                                 </option>
                             @endforeach    
                         </select>
-                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Empleado</label>
-                        <div class="col-sm-12">
-                            <select class="form-control" name="empleado_id" id="empleado_id" onChange="guardar()">
-                                <option value="">Escoge un empleado</option>
-                                @foreach ($empleadoData as $empleadote)
-                              
-                                    <option value="{{ $empleadote->id }}"> 
-    
-                                    DNI: {{ $empleadote->dni }} - Nombre: {{ $empleadote->nombre }} {{ $empleadote->apellidos }}
-                                    </option>
-                                @endforeach    
-                            </select>
-                        </div>
+                </div>
+
+                <div class="form-group" id="entrada_form">
+                    <label>Marcar Horario de Entrada</label>
+                    <div class="col-sm-12">
+                        <input type="time" id="entrada" name="entrada" value="00:00"  class="form-control">
                     </div>
+                </div>
+
+                <div class="form-group" id="salida_form">
+                    <label>Marcar Horario de Salida</label>
+                    <div class="col-sm-12">
+                        <input type="time" id="salida" name="salida" value="00:00" class="form-control">
+                    </div>
+                </div>
+
 
                     <div class="col-sm-offset-12 col-sm-10">
                      <button type="submit" class="btn btn-primary" id="saveBtn" value="create" disabled>Guardar Cambios
@@ -113,7 +121,7 @@
     function guardar(){
         //alert(document.getElementById("empleado_id").value);
         //alert(document.getElementById("horario_id").value);
-         if(document.getElementById("horario_id").value.length>=1 && document.getElementById("empleado_id").value.length>=1) {
+         if(document.getElementById("fecha").value.length>=1 && document.getElementById("asignacion_id").value.length>=1) {
             document.getElementById('saveBtn').disabled = false;
             //alert("Hola");
         }
@@ -139,19 +147,29 @@
                 "sLengthMenu": "Mostrar _MENU_ registros por página",
                 "sInfo": "Mostrando página _PAGE_ de _PAGES_ en total"
                 },
-                ajax: "{{ route('ajaxasignaciones.index') }}",
+                ajax: "{{ route('ajaxmarcaciones.index') }}",
                 
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                    {data: 'hora_inicio', name: 'hora_inicio'},
-                    {data: 'hora_fin', name: 'hora_fin'},
-                    {data: 'dni', name: 'dni'},
+                    {data: 'fecha', name: 'fecha'},
                     {data: 'nombre', name: 'nombre'},
                     {data: 'apellidos', name: 'apellidos'},
+                    {data: 'dni', name: 'dni'},
+                    {data: 'foto', name: 'foto'},
+                    {data: 'hora_inicio', name: 'hora_inicio'},
+                    {data: 'hora_fin', name: 'hora_fin'},
                     {data: 'tolerancias', name: 'tolerancias'},
-
+                    {data: 'entrada', name: 'entrada'},
+                    {data: 'salida', name: 'salida'},
                     {data: 'action', name: 'action', orderable: false, searchable: false},
-                ],
+                ],      columnDefs:
+                [{
+                    "targets": 5,
+                    "data": 'foto',
+                    "render": function (data, type, row, meta) {
+                        return '<img src="' + data + '" alt="' + data + '"height="90" width="90"/>';
+                    }
+                }],
             });
         
         
@@ -167,27 +185,37 @@
             $('#createNewProduct').click(function () {
         
                 $( "#saveBtn" ).prop( "disabled", true );
+                $("#fecha_form").show();
+                $("#empleado_form").show();
+                $("#entrada_form").hide();
+                //$("#entrada").val("10:20:00");
+                $("#salida_form").hide();
                 $('#saveBtn').val("create-product");
                 $('#product_id').val('');
                 $('#productForm').trigger("reset");
-                $('#modelHeading').html("Crear nuevo Horario");
+                $('#modelHeading').html("Crear nueva Marcación");
                 $('#ajaxModel').modal('show');
             });
             
             $('body').on('click', '.editProduct', function () {
                 $( "#saveBtn" ).prop( "disabled", false );
                 //$('#hora_inicio').click();
-                
+                $("#fecha_form").hide();
+                $("#empleado_form").hide();
+                $("#entrada_form").show();
+                $("#salida_form").show();
     
               var product_id = $(this).data('id');
-              $.get("{{ route('ajaxasignaciones.index') }}" +'/' + product_id +'/edit', function (data) {
-                  $('#modelHeading').html("Editar Horario");
+              $.get("{{ route('ajaxmarcaciones.index') }}" +'/' + product_id +'/edit', function (data) {
+                  $('#modelHeading').html("Editar Marcación");
                   $('#saveBtn').val("edit-user");
                   $('#ajaxModel').modal('show');
                   $('#product_id').val(data.id);
+                  $('#fecha').val(data.fecha);
+                  $('#asignacion_id').val(data.asignacion_id);
                   $('#hora_inicio').val(data.hora_inicio);
                   $('#hora_fin').val(data.hora_fin);
-                  $('#tolerancias').val(data.tolerancias);
+                  //$('#tolerancias').val(data.tolerancias);
   
   
         
@@ -200,7 +228,7 @@
                 e.preventDefault();
                 $.ajax({
                   data: $('#productForm').serialize(),
-                  url: "{{ route('ajaxasignaciones.store') }}",
+                  url: "{{ route('ajaxmarcaciones.store') }}",
                   type: "POST",
                   dataType: 'json',
                   success: function (data) {
@@ -240,7 +268,7 @@
               
                 $.ajax({
                     type: "DELETE",
-                    url: "{{ route('ajaxasignaciones.store') }}"+'/'+product_id,
+                    url: "{{ route('ajaxmarcaciones.store') }}"+'/'+product_id,
                     success: function (data) {
                         table.draw();
                         Swal.fire({
